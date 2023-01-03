@@ -76,16 +76,18 @@ int main(){
 		plansza[x][y]=12;
 		if(plansza[x+dx][y+dy]==11 && y+dy==7) plansza[x+dx][y+dy]=7; //promocja pionka na hetmana
 		wypisz();
-		if(ocena()>=WYGRANA) {printf("Komputer wygral!"); status = send(sock2, buf, strlen(buf), 0); break;}
-		else if(ocena()<=PRZEGRANA){printf("Wygrales!"); status = send(sock2, buf, strlen(buf), 0);break;}
-		printf("podaj ruch skad dokad");
-		scanf("%d%d%d%d", &x, &y, &x2, &y2);
+		if(ocena()>=WYGRANA) {sprintf(buf, "Komputer wygral!"); status = send(sock2, buf, strlen(buf), 0); break;}
+		else if(ocena()<=PRZEGRANA){sprintf(buf, "Wygrales!"); status = send(sock2, buf, strlen(buf), 0);break;}
+		sprintf(buf, "podaj ruch skad dokad");
+		status = send(sock2,buf,strlen(buf),0);
+        status = recv(sock2,buf,sizeof buf,0);
+        buf[status]='\0';
 		plansza[x2][y2]=plansza[x][y];
 		plansza[x][y]=12;
 		if(plansza[x2][y2]==5 && y2==0) plansza[x2][y2]=1; //promocja pionka na hetmana
 		wypisz();
-		if(ocena()>=WYGRANA) {printf("Komputer wygral!"); status = send(sock2, buf, strlen(buf), 0); break;}
-		else if(ocena()<=PRZEGRANA){printf("Wygrales!"); status = send(sock2, buf, strlen(buf), 0);break;}
+		if(ocena()>=WYGRANA) {sprintf(buf, "Komputer wygral!"); status = send(sock2, buf, strlen(buf), 0); break;}
+		else if(ocena()<=PRZEGRANA){sprintf(buf, "Wygrales!"); status = send(sock2, buf, strlen(buf), 0);break;}
 	}
 
 
@@ -106,14 +108,15 @@ int ocena(){
 
 void wypisz(){
 	char fig[]="khwgspKHWGSP ";
-	printf("\n\n\n     y,0  y,1  y,2  y,3  y,4  y,5  y,6  y,7\n");
-	printf("    ========================================\n");
+	sprintf(buf, "\n\n\n     y,0  y,1  y,2  y,3  y,4  y,5  y,6  y,7\n");
+	sprintf(buf, "    ========================================\n");
 	for(int i=0;i<8;i++){\
-		printf("%d,x ",i);
+		sprintf(buf, "%d,x ",i);
 		for(int j=0;j<8;j++)
-			printf("| %c |", fig[plansza[i][j]]);
-		printf("\n    =========================================\n");
-	}	}
+			sprintf(buf, "| %c |", fig[plansza[i][j]]);
+		sprintf(buf, "\n    =========================================\n");
+	}	
+    status = send(sock2,buf,strlen(buf),0);}
 
 int ruch(int tryb, int *x, int *y, int *k, int *o){
 	int px_pom, py_pom, k_pom, o_pom, px_py, px, py, dx, dy, kierunek, odleglosc;
